@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="sv">
+<meta charset="utf-8">
+<title>Menyradio — menyradsmeny</title>
+<style>
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 800px; height: 440px; overflow: hidden; }
+body { background: #e6ecef; color: #202020; font: 13px -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
+.bar { height: 25px; background: #f1f4f6e8; border-bottom: 1px solid #cdd4da88; display: flex; align-items: center; gap: 20px; padding: 0 18px; }
+.apple { font-size: 17px; line-height: 1; }
+.finder { font-weight: 600; }
+.spacer { flex: 1; }
+.status { width: 30px; height: 23px; display: grid; place-items: center; border-radius: 4px; background: #ccd4db; }
+.symbol { width: 21px; height: 18px; object-fit: contain; }
+.clock { white-space: nowrap; font-size: 12px; }
+.menu { position: absolute; right: 21px; top: 29px; width: 320px; padding: 5px; border-radius: 6px; background: #f1f2f3f5; border: 1px solid #b6bdc3; box-shadow: 0 10px 25px #16222e2e, 0 2px 4px #16222e1c; }
+.row { height: 22px; display: flex; align-items: center; padding: 0 13px 0 22px; position: relative; white-space: nowrap; border-radius: 4px; }
+.disabled { color: #74777b; }
+.selected { background: #0868d7; color: white; }
+.programme { margin-left: 10px; color: #74777b; font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
+.selected .programme { color: #ffffffc7; }
+.check { position: absolute; left: 5px; font-size: 12px; }
+.separator { height: 1px; background: #cdd0d3; margin: 5px 6px; }
+.shortcut { margin-left: auto; color: #74777b; }
+.brand { position: absolute; left: 45px; top: 165px; display: flex; align-items: center; gap: 15px; }
+.brand img { width: 76px; height: 76px; }
+h1 { margin: 0 0 6px; font-size: 27px; letter-spacing: -.5px; font-weight: 650; }
+.tagline { margin: 0; font-size: 14px; color: #4d606e; line-height: 1.5; }
+</style>
+<div class="bar">
+ <span class="apple"></span><span class="finder">Finder</span><span>Arkiv</span><span>Redigera</span><span>Visa</span>
+ <span class="spacer"></span>
+ <img class="symbol" src="speaker.wave.2.fill.png" alt="">
+ <img class="symbol" src="wifi.png" alt="">
+ <img class="symbol" src="battery.100.png" alt="">
+ <div class="status" aria-label="Radioikonen"><img class="symbol" src="radio.fill.png" alt=""></div>
+ <span class="clock">Mån 13:45</span>
+</div>
+<div class="brand"><img src="../../Resources/AppIcon.png" alt=""><div><h1>Menyradio</h1><p class="tagline">Sveriges Radio.<br>Direkt från menyraden.</p></div></div>
+<div class="menu" aria-label="Menyradios meny">
+ <div class="row disabled">Menyradio</div>
+ <div class="row selected"><span class="check">✓</span>P1<span class="programme">Studio Ett</span></div>
+ <div class="row">P2<span class="programme">Klassisk förmiddag</span></div>
+ <div class="row">P3<span class="programme">Eftermiddag i P3</span></div>
+ <div class="row">P4 Värmland<span class="programme">Eftermiddag i P4 Värmland</span></div>
+ <div class="separator"></div>
+ <div class="row disabled">P1</div>
+ <div class="row disabled">Studio Ett</div>
+ <div class="separator"></div>
+ <div class="row">Stoppa</div>
+ <div class="row">AirPlay…</div>
+ <div class="row">Inställningar…</div>
+ <div class="row">Avsluta<span class="shortcut">⌘Q</span></div>
+</div>
+</html>
