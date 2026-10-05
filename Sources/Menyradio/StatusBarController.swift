@@ -1,10 +1,13 @@
 import AppKit
 import SwiftUI
 import Observation
+import Sparkle
 
 /// A standard macOS status menu, with a tooltip on the actual status button.
 @MainActor final class StatusBarController: NSObject, NSMenuDelegate {
     let player: RadioPlayer
+    private let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+    private var updateItem: NSMenuItem?
     private let library: RadioLibrary
     private let statusItem: NSStatusItem
     private let menu = NSMenu()
@@ -38,6 +41,9 @@ import Observation
         menu.addItem(stopItem)
         menu.addItem(actionItem("AirPlay…", action: #selector(showAirPlay)))
         menu.addItem(actionItem("Inställningar…", action: #selector(showSettings)))
+        let updateItem = actionItem("Sök efter uppdateringar…", action: #selector(checkForUpdates))
+        self.updateItem = updateItem
+        menu.addItem(updateItem)
         menu.addItem(actionItem("Avsluta", action: #selector(quit), key: "q"))
         statusItem.menu = menu
         observePlayer()
@@ -64,6 +70,7 @@ import Observation
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
+        updateItem?.isEnabled = updaterController.updater.canCheckForUpdates
         // Keep playback rows alive so their titles and visibility can update
         // while the native menu is tracking mouse and keyboard input.
         while let first = menu.items.first, first !== playbackSeparator {
@@ -162,6 +169,13 @@ import Observation
         guard let channel = sender.representedObject as? Channel else { return }
         player.select(channel)
     }
+    @objc private func checkForUpdates() {
+        menu.cancelTracking()
+        DispatchQueue.main.async { [weak self] in
+            NSApp.activate(ignoringOtherApps: true)
+            self?.updaterController.checkForUpdates(nil)
+        }
+    }
     @objc private func stop() { player.stop() }
     @objc private func quit() { player.stop(); NSApp.terminate(nil) }
     @objc private func refreshChannels() { Task { await library.refresh(force: true) } }
@@ -181,7 +195,7 @@ import Observation
 
     @objc private func showSettings() {
         if settingsWindow == nil {
-            let controller = NSHostingController(rootView: SettingsView(library: library))
+            let controller = NSHostingController(rootView: SettingsView(library: library, updater: updaterController.updater))
             let window = NSWindow(contentViewController: controller)
             window.title = "Inställningar"
             window.styleMask = [.titled, .closable, .miniaturizable]

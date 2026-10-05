@@ -7,9 +7,13 @@
 <key>CFBundleDisplayName</key><string>Menyradio</string>
 <key>CFBundleIconFile</key><string>AppIcon</string>
 <key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.1.0</string>
-<key>CFBundleVersion</key><string>1</string>
+<key>CFBundleShortVersionString</key><string>0.2.0</string>
+<key>CFBundleVersion</key><string>2</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string>
 <key>LSUIElement</key><true/>
 <key>NSPrincipalClass</key><string>NSApplication</string>
+<key>SUFeedURL</key><string>https://raw.githubusercontent.com/viktorbijlenga/menyradio/main/appcast.xml</string>
+<key>SUPublicEDKey</key><string>BL/PDkeJ27cYOfxWYLR+pe5S73s/YTl219II+7vawlc=</string>
+<key>SUEnableAutomaticChecks</key><false/>
+<key>SUAllowsAutomaticUpdates</key><false/>
 </dict></plist>

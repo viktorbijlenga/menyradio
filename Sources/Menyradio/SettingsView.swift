@@ -1,8 +1,10 @@
 import SwiftUI
 import ServiceManagement
+import Sparkle
 
 struct SettingsView: View {
     let library: RadioLibrary
+    let updater: SPUUpdater
     @State private var loginEnabled = SMAppService.mainApp.status == .enabled
     @State private var loginError: String?
     var body: some View {
@@ -38,10 +40,14 @@ struct SettingsView: View {
                     loginError = SMAppService.mainApp.status == .requiresApproval ? "Godkänn appen under Inloggningsobjekt i Systeminställningar." : nil
                 } catch { loginError = error.localizedDescription; loginEnabled = SMAppService.mainApp.status == .enabled }
             }))
+            Toggle("Sök automatiskt efter appuppdateringar", isOn: Binding(
+                get: { updater.automaticallyChecksForUpdates },
+                set: { updater.automaticallyChecksForUpdates = $0 }
+            ))
             if let loginError { Text(loginError).font(.caption).foregroundStyle(.secondary) }
             Text("En fristående app för Sveriges Radio. Ingen koppling till Sveriges Radio AB.").font(.caption).foregroundStyle(.secondary)
         }
-        .padding(16).frame(width: 370, height: 480)
+        .padding(16).frame(width: 370, height: 510)
         .onAppear { loginEnabled = SMAppService.mainApp.status == .enabled; NSApp.activate(ignoringOtherApps: true) }
     }
 }

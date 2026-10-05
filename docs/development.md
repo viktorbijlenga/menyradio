@@ -1,6 +1,6 @@
 # Development notes
 
-Menyradio uses Swift, AppKit, SwiftUI and AVPlayer, with no third-party dependencies. It targets macOS 14 or later and uses a Swift 6 toolchain.
+Menyradio uses Swift, AppKit, SwiftUI and AVPlayer, with Sparkle 2.10.0 for app updates. It targets macOS 14 or later and uses a Swift 6 toolchain.
 
 Open `Package.swift` in Xcode to edit the source. Use `./build.sh` to package the executable as a menu-only app with its Info.plist and icon. The script signs the local build ad hoc and updates the bundle timestamp for Finder. The release script supports Developer ID signing and notarization once a certificate and Keychain credentials are installed.
 
@@ -25,9 +25,19 @@ SIGNING_IDENTITY='Developer ID Application: Your Name (YOURTEAMID)' \
 NOTARY_PROFILE='Menyradio' ./scripts/package-release.sh --notarize
 ```
 
-This enables hardened runtime and a secure timestamp, submits the universal app to Apple, staples and validates the ticket, checks Gatekeeper acceptance, and packages the stapled app as `Menyradio-VERSION-macOS.zip` with a checksum. A failure stops packaging. The published 0.1.0 release is Developer ID-signed and notarized by Apple.
+This enables hardened runtime and a secure timestamp, submits the universal app to Apple, staples and validates the ticket, checks Gatekeeper acceptance, and packages the stapled app as `Menyradio-VERSION-macOS.zip` with a checksum. A failure stops packaging. Published releases are Developer ID-signed and notarized by Apple.
 
 See [Apple's Developer ID guide](https://developer.apple.com/developer-id/) and [notarization workflow](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow).
+
+## App updates
+
+Sparkle is pinned in `Package.swift` and `Package.resolved`. `build.sh` embeds the framework and its license, preserving framework symlinks. The release script signs its nested helpers before signing the framework and app.
+
+Update archives use a separate Ed25519 key stored in Keychain under the Sparkle account `Menyradio`. The public key is embedded as `SUPublicEDKey`. To create or inspect that key on the release machine, run `.build/artifacts/sparkle/Sparkle/bin/generate_keys --account Menyradio`. Keep the private key in Keychain; back it up securely when migrating machines.
+
+The notarized release script generates `appcast.xml` with signed archives and GitHub Release URLs. Increase both `CFBundleVersion` (monotonically increasing) and `CFBundleShortVersionString` before each release. Upload the ZIP and checksum to the corresponding `vVERSION` GitHub Release **before** pushing the generated `appcast.xml` to main. Existing feed entries are retained; delta updates are disabled.
+
+The app fetches its feed over HTTPS from `https://raw.githubusercontent.com/viktorbijlenga/menyradio/main/appcast.xml`. Automatic checks are off by default and can be enabled in Settings; installation remains user-confirmed. The menu provides a manual check. No system profile is sent. Version 0.1.0 has no updater and must be upgraded manually once.
 
 ## Small architecture
 

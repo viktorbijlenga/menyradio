@@ -15,6 +15,9 @@ Menyradio is a small radio app for listening while you work. Click the radio ico
 - Shows what's playing when you hover over the radio icon.
 - Includes an AirPlay speaker picker and macOS media controls.
 - Can start automatically when you log in.
+- Checks for app updates through Sparkle, with optional automatic checks.
+
+Choose **Sök efter uppdateringar…** in the menu to check for a new version. Enable automatic checks in Settings if you want them. Users of 0.1.0 need to download 0.2.0 manually once.
 
 The app stays in the menu bar, with no Dock icon or main player window. It plays the original live stream without added sound effects.
 

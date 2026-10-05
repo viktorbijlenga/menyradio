@@ -1,6 +1,7 @@
 #!/bin/zsh
 set -eu
 cd "${0:A:h:h}"
+project_directory="$PWD"
 notarize=false
 for argument in "$@"; do
   case "$argument" in
@@ -21,6 +22,13 @@ fi
 app="$PWD/build/Menyradio.app"
 version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")
 if $notarize; then
+  framework="$app/Contents/Frameworks/Sparkle.framework"
+  for service in "$framework"/Versions/B/XPCServices/*.xpc(N); do
+    codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp "$service"
+  done
+  codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp "$framework/Versions/B/Autoupdate"
+  codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp "$framework/Versions/B/Updater.app"
+  codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp "$framework"
   codesign --force --sign "$SIGNING_IDENTITY" --options runtime --timestamp "$app"
 fi
 codesign --verify --deep --strict "$app"
@@ -49,3 +57,18 @@ ditto -c -k --sequesterRsrc --keepParent "$app" "build/releases/$archive"
 cd build/releases
 shasum -a 256 "$archive" > "$archive.sha256"
 print "Packaged $PWD/$archive"
+
+if $notarize; then
+  tools="$project_directory/.build/artifacts/sparkle/Sparkle/bin"
+  : "${SPARKLE_TOOLS:=$tools}"
+  update_directory="$project_directory/build/sparkle-updates/$version"
+  mkdir -p "$update_directory"
+  cp "$archive" "$update_directory/"
+  if [[ -f "$project_directory/appcast.xml" ]]; then
+    cp "$project_directory/appcast.xml" "$update_directory/appcast.xml"
+  fi
+  "$SPARKLE_TOOLS/generate_appcast" --account Menyradio --maximum-deltas 0 \
+    --download-url-prefix "https://github.com/viktorbijlenga/menyradio/releases/download/v$version/" \
+    --link "https://github.com/viktorbijlenga/menyradio" "$update_directory"
+  cp "$update_directory/appcast.xml" "$project_directory/appcast.xml"
+fi
