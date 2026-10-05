@@ -2,13 +2,32 @@
 
 Menyradio uses Swift, AppKit, SwiftUI and AVPlayer, with no third-party dependencies. It targets macOS 14 or later and uses a Swift 6 toolchain.
 
-Open `Package.swift` in Xcode to edit the source. Use `./build.sh` to package the executable as a menu-only app with its Info.plist and icon. The script signs the local build ad hoc and updates the bundle timestamp for Finder. Developer ID signing and notarization are not configured.
+Open `Package.swift` in Xcode to edit the source. Use `./build.sh` to package the executable as a menu-only app with its Info.plist and icon. The script signs the local build ad hoc and updates the bundle timestamp for Finder. The release script supports Developer ID signing and notarization once a certificate and Keychain credentials are installed.
 
 Preferences use UserDefaults. Channel responses are cached under Application Support/Menyradio for 24 hours; failed refreshes retain the previous cache. The first launch needs a successful channel request.
 
 ## Release packaging
 
-Run `./scripts/package-release.sh` to build a universal app for Apple Silicon and Intel, verify its ad hoc signature and both architectures, and create a ZIP plus SHA-256 checksum under `build/releases`. The release version comes from `Resources/Info.plist`. GitHub releases contain these two files. Developer ID signing and notarization are still required for distribution without the unidentified-developer prompt; current releases document the macOS Open Anyway procedure.
+Run `./scripts/package-release.sh` to build a universal app for Apple Silicon and Intel, verify its ad hoc signature and both architectures, and create an `-unsigned.zip` plus SHA-256 checksum under `build/releases`. The release version comes from `Resources/Info.plist`.
+
+For distribution through Gatekeeper, use a **Developer ID Application** certificate with its private key in your Keychain (requires Apple Developer Program membership). In Xcode → Settings → Accounts, add your developer account and use Manage Certificates to create that certificate.
+
+Store notarization credentials in Keychain once; omit the password argument so the tool prompts securely. Use an app-specific password generated for your Apple account. Never commit credentials or certificate private keys.
+
+```sh
+xcrun notarytool store-credentials Menyradio --apple-id 'your-apple-id@example.com' --team-id 'YOURTEAMID'
+```
+
+Then create the signed release:
+
+```sh
+SIGNING_IDENTITY='Developer ID Application: Your Name (YOURTEAMID)' \
+NOTARY_PROFILE='Menyradio' ./scripts/package-release.sh --notarize
+```
+
+This enables hardened runtime and a secure timestamp, submits the universal app to Apple, staples and validates the ticket, checks Gatekeeper acceptance, and packages the stapled app as `Menyradio-VERSION-macOS.zip` with a checksum. A failure stops packaging. The published 0.1.0 release is Developer ID-signed and notarized by Apple.
+
+See [Apple's Developer ID guide](https://developer.apple.com/developer-id/) and [notarization workflow](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow).
 
 ## Small architecture
 

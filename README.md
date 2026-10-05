@@ -22,18 +22,20 @@ The app stays in the menu bar, with no Dock icon or main player window. It plays
 
 Requires **macOS 14 or later**, on Apple Silicon or Intel.
 
-1. [Download the latest release](https://github.com/imwithfriends/menyradio/releases/latest) and unzip it.
+1. [Download the latest release](https://github.com/viktorbijlenga/menyradio/releases/latest) and unzip it.
 2. Move **Menyradio.app** to Applications.
 3. Open the app and look for the radio icon in the menu bar.
 
-The repository is currently private, so downloading requires access. This first release is not Developer ID-signed or notarized. If macOS blocks it, try opening it once, then go to **System Settings → Privacy & Security → Open Anyway**. See [Apple's instructions](https://support.apple.com/en-us/102445).
+The release is Developer ID-signed and notarized by Apple, and supports both Apple Silicon and Intel Macs.
+
+For signed and notarized release packaging, see the [release instructions](docs/development.md#release-packaging).
 
 ### Build from source
 
 You'll need **Xcode 16 or later**.
 
 ```sh
-git clone https://github.com/imwithfriends/menyradio.git
+git clone https://github.com/viktorbijlenga/menyradio.git
 cd menyradio
 ./build.sh --run
 ```
