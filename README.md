@@ -55,8 +55,14 @@ To listen on an AirPlay speaker, choose **AirPlay…**, then click the AirPlay s
 
 ## About
 
-Built with native Apple frameworks, with no third-party dependencies. Inspired by the simplicity of [RÚV Noise](https://github.com/jokull/ruv-noise).
+Built with native Apple frameworks, with Sparkle for app updates. Inspired by the simplicity of [RÚV Noise](https://github.com/jokull/ruv-noise).
 
 This is an independent project, not affiliated with Sveriges Radio. Channel and programme information comes from SR's public API. [The API is no longer maintained](https://www.sverigesradio.se/artikel/dokumentation-for-api-version-2), so metadata may occasionally be unavailable.
 
 For API endpoints, tests and implementation details, see the [development notes](docs/development.md).
+
+## License
+
+Menyradio is licensed under the [MIT License](LICENSE). Copyright (c) 2026 Viktor Bijlenga.
+
+Sparkle and its bundled components retain their own licenses; their notices are included in the app.
