@@ -22,6 +22,11 @@ body { background: #e6ecef; color: #202020; font: 13px -apple-system, BlinkMacSy
 .check { position: absolute; left: 5px; font-size: 12px; }
 .separator { height: 1px; background: #cdd0d3; margin: 5px 6px; }
 .shortcut { margin-left: auto; color: #74777b; }
+.volume { height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 15px 0 20px; }
+.volume img { width: 20px; height: 18px; opacity: .5; object-fit: contain; }
+.track { flex: 1; height: 6px; position: relative; border-radius: 3px; background: #dcdedf; }
+.level { width: 67%; height: 100%; border-radius: 3px; background: #008aff; }
+.knob { position: absolute; left: 67%; top: 50%; width: 18px; height: 18px; transform: translate(-50%, -50%); background: white; border-radius: 50%; box-shadow: 0 1px 3px #00000026; }
 .brand { position: absolute; left: 45px; top: 165px; display: flex; align-items: center; gap: 15px; }
 .brand img { width: 76px; height: 76px; }
 h1 { margin: 0 0 6px; font-size: 27px; letter-spacing: -.5px; font-weight: 650; }
@@ -46,9 +51,13 @@ h1 { margin: 0 0 6px; font-size: 27px; letter-spacing: -.5px; font-weight: 650; 
  <div class="separator"></div>
  <div class="row disabled">P1</div>
  <div class="row disabled">Studio Ett</div>
- <div class="separator"></div>
  <div class="row">Stoppa</div>
+ <div class="separator"></div>
+ <div class="row disabled">Volym – 67 %</div>
+ <div class="volume"><img src="speaker.fill.png" alt="Låg volym"><div class="track"><div class="level"></div><div class="knob"></div></div><img src="speaker.wave.3.fill.png" alt="Hög volym"></div>
+ <div class="row">Ljud av</div>
  <div class="row">AirPlay…</div>
+ <div class="separator"></div>
  <div class="row">Inställningar…</div>
  <div class="row">Avsluta<span class="shortcut">⌘Q</span></div>
 </div>

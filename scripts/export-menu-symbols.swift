@@ -2,7 +2,7 @@
 import AppKit
 import Foundation
 let directory = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("docs/images")
-for name in ["radio.fill", "wifi", "battery.100", "speaker.wave.2.fill"] {
+for name in ["radio.fill", "wifi", "battery.100", "speaker.wave.2.fill", "speaker.fill", "speaker.wave.3.fill"] {
     let size = NSSize(width: 24, height: 20)
     let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: 72, pixelsHigh: 60,
                                   bitsPerSample: 8, samplesPerPixel: 4, hasAlpha: true,
