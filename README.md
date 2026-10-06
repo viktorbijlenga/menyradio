@@ -4,7 +4,7 @@ Sveriges Radio, right in your Mac's menu bar.
 
 Menyradio is a small radio app for listening while you work. Click the radio icon, choose a channel, and keep listening when you close the menu.
 
-<img src="docs/images/menu-preview-v0.3.0.png" width="800" alt="Menyradio: P1, P2, P3 and a P4 favourite with current programme names beside each channel, plus Stop, a volume slider, mute, AirPlay, Settings and Quit.">
+<img src="docs/images/menu-preview-v0.3.0-2.png" width="800" alt="Menyradio: P1, P2, P3 and a P4 favourite with current programme names beside each channel, plus Stop, a volume slider, mute, AirPlay, Settings and Quit.">
 
 
 ## What it does
