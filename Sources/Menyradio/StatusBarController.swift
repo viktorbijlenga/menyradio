@@ -10,6 +10,8 @@ import Sparkle
     private let library: RadioLibrary
     private let statusItem: NSStatusItem
     private let menu = NSMenu()
+    private let maximumMenuWidth: CGFloat = 360
+    private var textWidth: CGFloat { maximumMenuWidth - 56 }
     private var volumeControls: VolumeMenuView?
     private let volumeItem = NSMenuItem()
     private let volumeTitleItem = NSMenuItem(title: "Volym", action: nil, keyEquivalent: "")
@@ -45,6 +47,7 @@ import Sparkle
         volumeTitleItem.isEnabled = false
         menu.addItem(volumeTitleItem)
         let controls = VolumeMenuView(player: player)
+        controls.fitMenuWidth(242)
         volumeControls = controls
         volumeItem.view = controls
         volumeItem.isEnabled = true
@@ -117,16 +120,19 @@ import Sparkle
         for (index, item) in items.enumerated() { menu.insertItem(item, at: index) }
         updatePlaybackMenu()
         updateProgrammeTitles()
-        volumeControls?.fitMenuWidth(menu.size.width)
+        volumeControls?.fitMenuWidth(242)
+        volumeControls?.fitMenuWidth(min(maximumMenuWidth, menu.size.width))
     }
 
     private func updatePlaybackMenu() {
         let hasChannel = player.channel != nil
-        playingChannelItem.title = player.channel?.name ?? ""
+        playingChannelItem.title = menuText(player.channel?.name ?? "", width: textWidth)
         playingChannelItem.isHidden = !hasChannel
-        metadataItem.title = player.metadata ?? ""
+        metadataItem.title = menuText(player.metadata ?? "", width: textWidth)
+        metadataItem.toolTip = player.metadata
         metadataItem.isHidden = !hasChannel || player.metadata?.isEmpty != false
-        playbackStateItem.title = player.state.rawValue
+        playbackStateItem.title = menuText(player.state.rawValue, width: textWidth)
+        playbackStateItem.toolTip = player.state.rawValue
         playbackStateItem.isHidden = !hasChannel || player.state == .playing
         updateVolumeMenu()
         stopItem.isEnabled = hasChannel
@@ -136,7 +142,6 @@ import Sparkle
     }
 
     func menuWillOpen(_ menu: NSMenu) {
-        volumeControls?.fitMenuWidth(menu.size.width)
         programmeTask?.cancel()
         programmeTask = Task { [weak self] in
             while !Task.isCancelled {
@@ -158,19 +163,22 @@ import Sparkle
         for channel in library.favourites {
             guard let item = channelItems[channel.id] else { continue }
             if let programme = library.programmeTitle(for: channel.id) {
-                let compact = programme.count > 48 ? String(programme.prefix(47)) + "…" : programme
-                item.title = "\(channel.name)   \(compact)"
-                let title = NSMutableAttributedString(string: channel.name, attributes: [
-                    .font: NSFont.menuFont(ofSize: 0)
-                ])
-                title.append(NSAttributedString(string: "   \(compact)", attributes: [
-                    .font: NSFont.systemFont(ofSize: NSFont.smallSystemFontSize),
+                let font = NSFont.menuFont(ofSize: 0)
+                let detailFont = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+                let name = menuText(channel.name, width: textWidth, font: font)
+                let prefix = name + "   "
+                let prefixWidth = (prefix as NSString).size(withAttributes: [.font: font]).width
+                let compact = menuText(programme, width: max(0, textWidth - prefixWidth), font: detailFont)
+                item.title = "\(prefix)\(compact)"
+                let title = NSMutableAttributedString(string: prefix, attributes: [.font: font])
+                title.append(NSAttributedString(string: compact, attributes: [
+                    .font: detailFont,
                     .foregroundColor: NSColor.secondaryLabelColor
                 ]))
                 item.attributedTitle = title
                 item.toolTip = "\(channel.name) – \(programme)"
             } else {
-                item.title = channel.name
+                item.title = menuText(channel.name, width: textWidth)
                 item.attributedTitle = nil
                 item.toolTip = nil
             }
@@ -178,13 +186,13 @@ import Sparkle
     }
 
     private func textItem(_ title: String) -> NSMenuItem {
-        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        let item = NSMenuItem(title: menuText(title, width: textWidth), action: nil, keyEquivalent: "")
         item.isEnabled = false
         return item
     }
 
     private func actionItem(_ title: String, action: Selector, key: String = "") -> NSMenuItem {
-        let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        let item = NSMenuItem(title: menuText(title, width: textWidth), action: action, keyEquivalent: key)
         item.target = self
         return item
     }

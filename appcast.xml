@@ -3,6 +3,15 @@
     <channel>
         <title>Menyradio</title>
         <item>
+            <title>0.3.1</title>
+            <pubDate>Tue, 06 Oct 2026 10:30:51 +0200</pubDate>
+            <link>https://github.com/viktorbijlenga/menyradio</link>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>0.3.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/viktorbijlenga/menyradio/releases/download/v0.3.1/Menyradio-0.3.1-macOS.zip" length="1597863" type="application/octet-stream" sparkle:edSignature="78RfnELkxHO29iupwI8zOgsC+8K7IZuyw20l5PWVY01ymEzRjYGT4Ah4OS52vt/7m624PPh+ZEJaVdLYY9tbDQ=="/>
+        </item>
+        <item>
             <title>0.3.0</title>
             <pubDate>Tue, 06 Oct 2026 10:02:48 +0200</pubDate>
             <link>https://github.com/viktorbijlenga/menyradio</link>
