@@ -8,7 +8,7 @@ import tempfile
 import time
 
 root = Path(__file__).resolve().parent.parent
-output = root / "docs/images/menu-preview.png"
+output = root / "docs/images/menu-preview-v0.3.0.png"
 chrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 started = time.time()
 with tempfile.TemporaryDirectory(prefix="menyradio-readme-") as profile:
