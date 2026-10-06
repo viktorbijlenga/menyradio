@@ -37,7 +37,7 @@ Update archives use a separate Ed25519 key stored in Keychain under the Sparkle 
 
 The notarized release script generates `appcast.xml` with signed archives and GitHub Release URLs. Increase both `CFBundleVersion` (monotonically increasing) and `CFBundleShortVersionString` before each release. Upload the ZIP and checksum to the corresponding `vVERSION` GitHub Release **before** pushing the generated `appcast.xml` to main. Existing feed entries are retained; delta updates are disabled.
 
-The app fetches its feed over HTTPS from `https://raw.githubusercontent.com/viktorbijlenga/menyradio/main/appcast.xml`. Automatic checks are off by default and can be enabled in Settings; installation remains user-confirmed. The menu provides a manual check. No system profile is sent. Version 0.1.0 has no updater and must be upgraded manually once.
+The app fetches its feed over HTTPS from `https://raw.githubusercontent.com/viktorbijlenga/menyradio/main/appcast.xml`. Automatic checks are off by default and can be enabled in Settings; installation remains user-confirmed. Settings provides a manual update check. No system profile is sent. Version 0.1.0 has no updater and must be upgraded manually once.
 
 ## Small architecture
 

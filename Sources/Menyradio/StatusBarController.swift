@@ -7,10 +7,13 @@ import Sparkle
 @MainActor final class StatusBarController: NSObject, NSMenuDelegate {
     let player: RadioPlayer
     private let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
-    private var updateItem: NSMenuItem?
     private let library: RadioLibrary
     private let statusItem: NSStatusItem
     private let menu = NSMenu()
+    private var volumeControls: VolumeMenuView?
+    private let volumeItem = NSMenuItem()
+    private let volumeTitleItem = NSMenuItem(title: "Volym", action: nil, keyEquivalent: "")
+    private var muteItem: NSMenuItem?
     private let footerSeparator = NSMenuItem.separator()
     private let playbackSeparator = NSMenuItem.separator()
     private let playingChannelItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
@@ -35,18 +38,38 @@ import Sparkle
             item.isEnabled = false
             menu.addItem(item)
         }
-        menu.addItem(footerSeparator)
         stopItem.target = self
         stopItem.action = #selector(stop)
         menu.addItem(stopItem)
+        menu.addItem(.separator())
+        volumeTitleItem.isEnabled = false
+        menu.addItem(volumeTitleItem)
+        let controls = VolumeMenuView(player: player)
+        volumeControls = controls
+        volumeItem.view = controls
+        volumeItem.isEnabled = true
+        menu.addItem(volumeItem)
+        let muteItem = actionItem("Ljud av", action: #selector(toggleMute))
+        self.muteItem = muteItem
+        menu.addItem(muteItem)
         menu.addItem(actionItem("AirPlay…", action: #selector(showAirPlay)))
+        controls.onChange = { [weak self] in self?.updateVolumeMenu() }
+        menu.addItem(footerSeparator)
         menu.addItem(actionItem("Inställningar…", action: #selector(showSettings)))
-        let updateItem = actionItem("Sök efter uppdateringar…", action: #selector(checkForUpdates))
-        self.updateItem = updateItem
-        menu.addItem(updateItem)
         menu.addItem(actionItem("Avsluta", action: #selector(quit), key: "q"))
         statusItem.menu = menu
         observePlayer()
+    }
+
+    private func updateVolumeMenu() {
+        volumeControls?.refresh()
+        volumeTitleItem.title = "Volym – \(Int((player.volume * 100).rounded())) %"
+        muteItem?.state = player.isMuted ? .on : .off
+    }
+
+    @objc private func toggleMute() {
+        player.setMuted(!player.isMuted)
+        updateVolumeMenu()
     }
 
     private func observePlayer() {
@@ -70,7 +93,6 @@ import Sparkle
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
-        updateItem?.isEnabled = updaterController.updater.canCheckForUpdates
         // Keep playback rows alive so their titles and visibility can update
         // while the native menu is tracking mouse and keyboard input.
         while let first = menu.items.first, first !== playbackSeparator {
@@ -95,17 +117,18 @@ import Sparkle
         for (index, item) in items.enumerated() { menu.insertItem(item, at: index) }
         updatePlaybackMenu()
         updateProgrammeTitles()
+        volumeControls?.fitMenuWidth(menu.size.width)
     }
 
     private func updatePlaybackMenu() {
         let hasChannel = player.channel != nil
-        playbackSeparator.isHidden = !hasChannel
         playingChannelItem.title = player.channel?.name ?? ""
         playingChannelItem.isHidden = !hasChannel
         metadataItem.title = player.metadata ?? ""
         metadataItem.isHidden = !hasChannel || player.metadata?.isEmpty != false
         playbackStateItem.title = player.state.rawValue
         playbackStateItem.isHidden = !hasChannel || player.state == .playing
+        updateVolumeMenu()
         stopItem.isEnabled = hasChannel
         for (id, item) in channelItems {
             item.state = player.channel?.id == id ? .on : .off
@@ -113,6 +136,7 @@ import Sparkle
     }
 
     func menuWillOpen(_ menu: NSMenu) {
+        volumeControls?.fitMenuWidth(menu.size.width)
         programmeTask?.cancel()
         programmeTask = Task { [weak self] in
             while !Task.isCancelled {
@@ -168,13 +192,6 @@ import Sparkle
     @objc private func selectChannel(_ sender: NSMenuItem) {
         guard let channel = sender.representedObject as? Channel else { return }
         player.select(channel)
-    }
-    @objc private func checkForUpdates() {
-        menu.cancelTracking()
-        DispatchQueue.main.async { [weak self] in
-            NSApp.activate(ignoringOtherApps: true)
-            self?.updaterController.checkForUpdates(nil)
-        }
     }
     @objc private func stop() { player.stop() }
     @objc private func quit() { player.stop(); NSApp.terminate(nil) }

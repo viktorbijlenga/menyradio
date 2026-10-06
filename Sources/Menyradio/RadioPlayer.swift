@@ -7,6 +7,9 @@ import Observation
     private(set) var channel: Channel?
     private(set) var metadata: String?
     private(set) var metadataIsSong = false
+    private(set) var volume: Float
+    private(set) var isMuted: Bool
+    private let defaults: UserDefaults
     private let player = AVPlayer()
     var routingPlayer: AVPlayer { player }
     private let api: SverigesRadioAPI
@@ -17,14 +20,35 @@ import Observation
     private var metadataCache = RadioMetadataCache()
     private var wantsPlayback = false
 
-    init(api: SverigesRadioAPI = .init()) {
+    init(api: SverigesRadioAPI = .init(), defaults: UserDefaults = .standard) {
         self.api = api
+        self.defaults = defaults
+        let savedVolume = defaults.object(forKey: "playbackVolume") as? NSNumber
+        volume = min(1, max(0, savedVolume?.floatValue ?? 1))
+        isMuted = defaults.bool(forKey: "playbackMuted")
+        player.volume = volume
+        player.isMuted = isMuted
         player.automaticallyWaitsToMinimizeStalling = true
         // Follow system output initially; AVKit can select an app-specific route.
         player.audioOutputDeviceUniqueID = nil
         nowPlaying.configure(play: { [weak self] in self?.resume() }, pause: { [weak self] in self?.pause() }, stop: { [weak self] in self?.stop() }, toggle: { [weak self] in
             guard let self else { return }; self.wantsPlayback ? self.pause() : self.resume()
         })
+    }
+
+    func setVolume(_ value: Float) {
+        guard value.isFinite else { return }
+        volume = min(1, max(0, value))
+        player.volume = volume
+        defaults.set(volume, forKey: "playbackVolume")
+        // Moving the slider deliberately restores sound.
+        if volume > 0 { setMuted(false) }
+    }
+
+    func setMuted(_ muted: Bool) {
+        isMuted = muted
+        player.isMuted = muted
+        defaults.set(muted, forKey: "playbackMuted")
     }
 
     func select(_ channel: Channel) {

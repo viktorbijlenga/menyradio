@@ -63,6 +63,10 @@ import Observation
         Task { await refresh() }
     }
     var favourites: [Channel] { favouriteIDs.compactMap { id in channels.first { $0.id == id } } }
+    var availableChannels: [Channel] {
+        channels.filter { !favouriteIDs.contains($0.id) }
+            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    }
     func refresh(force: Bool = false) async {
         guard !loading else { return }
         guard force || cacheDate == nil || Date().timeIntervalSince(cacheDate!) > 86400 else { return }
@@ -80,8 +84,7 @@ import Observation
         if !selected { favouriteIDs.removeAll { $0 == channel.id } }
     }
     func move(_ id: Int, by offset: Int) {
-        guard let index = favouriteIDs.firstIndex(of: id), favouriteIDs.indices.contains(index + offset) else { return }
-        favouriteIDs.swapAt(index, index + offset)
+        favouriteIDs = movingFavourite(id, by: offset, in: favouriteIDs, visibleIDs: favourites.map(\.id))
     }
 }
 
@@ -94,4 +97,14 @@ func loadFavouriteIDs(defaults: UserDefaults = .standard,
         return previous
     }
     return [132, 163, 164]
+}
+
+/// Reorder the rows users actually see, preserving temporarily unavailable IDs.
+func movingFavourite(_ id: Int, by offset: Int, in ids: [Int], visibleIDs: [Int]) -> [Int] {
+    guard let row = visibleIDs.firstIndex(of: id), visibleIDs.indices.contains(row + offset),
+          let source = ids.firstIndex(of: id),
+          let destination = ids.firstIndex(of: visibleIDs[row + offset]) else { return ids }
+    var result = ids
+    result.swapAt(source, destination)
+    return result
 }

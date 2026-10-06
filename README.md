@@ -17,7 +17,7 @@ Menyradio is a small radio app for listening while you work. Click the radio ico
 - Can start automatically when you log in.
 - Checks for app updates through Sparkle, with optional automatic checks.
 
-Choose **Sök efter uppdateringar…** in the menu to check for a new version. Enable automatic checks in Settings if you want them. Users of 0.1.0 need to download 0.2.0 manually once.
+Choose **Sök nu…** under **Uppdateringar** in **Inställningar…** to check for a new version. Enable automatic checks in Settings if you want them. Users of 0.1.0 need to download 0.2.0 manually once.
 
 The app stays in the menu bar, with no Dock icon or main player window. It plays the original live stream without added sound effects.
 
@@ -47,9 +47,9 @@ The app is created at `build/Menyradio.app`. You can open it from there or move 
 
 ## Listening
 
-Click the radio icon in the menu bar and choose a channel. A checkmark shows the selected channel. Choose **Stoppa** to stop listening.
+Click the radio icon in the menu bar and choose a channel. Volume and mute controls are always available in the menu, so you can adjust the sound before starting a station. Volume and mute are remembered between launches; moving the slider above zero unmutes playback. A checkmark shows the selected channel. Choose **Stoppa** to stop listening.
 
-Open **Inställningar…** to add local P4 stations, reorder your favourites or enable launch at login. For launch at login, keep the app in Applications and approve it in System Settings if macOS asks.
+Open **Inställningar…** to manage channels: use the arrows to reorder **Kanaler i menyn**, minus to remove a station, and plus under **Lägg till kanaler** to add one. Stations already in the menu are excluded from the add list. You can also enable launch at login. For launch at login, keep the app in Applications and approve it in System Settings if macOS asks.
 
 To listen on an AirPlay speaker, choose **AirPlay…**, then click the AirPlay symbol in the small speaker-selection window. The normal radio menu remains a simple list.
 
